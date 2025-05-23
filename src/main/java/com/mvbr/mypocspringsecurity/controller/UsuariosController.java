@@ -17,9 +17,16 @@ public class UsuariosController {
         this.usuarioService = usuarioService;
     }
 
+    // todo: refatorar -> @RequestBody para @RequestParam (String username, String password)...
     @PostMapping("/registrar")
     public void registrar(@RequestBody Usuario usuario) {
         this.usuarioService.registrar(usuario);
+    }
+
+    // todo: refatorar -> @RequestBody para @RequestParam (String username, String password)...
+    @PostMapping("/logar")
+    public void logar(@RequestBody Usuario usuario) {
+        this.usuarioService.logar(usuario);
     }
 
 }

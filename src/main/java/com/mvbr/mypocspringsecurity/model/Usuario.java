@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 
 import java.util.Objects;
 
+import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_USER;
+
 @Entity
 public class Usuario {
 
@@ -15,7 +17,7 @@ public class Usuario {
     private Long id;
     private String username;
     private String password;
-    private String role = "USER";
+    private String role = HOLE_USER;
 
     public Long getId() {
         return id;

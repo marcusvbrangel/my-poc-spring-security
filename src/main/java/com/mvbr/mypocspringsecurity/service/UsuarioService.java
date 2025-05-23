@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_USER;
+
 @Service
 public class UsuarioService {
 
@@ -29,7 +31,7 @@ public class UsuarioService {
         Usuario user = new Usuario();
         user.setUsername(usuario.getUsername());
         user.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        user.setRole("USER");
+        user.setRole(HOLE_USER);
         this.usuarioRepository.save(user);
     }
 
@@ -52,6 +54,10 @@ public class UsuarioService {
 
         return Optional.empty();
 
+    }
+
+    public void logar(Usuario usuario) {
+        // todo: implementar...
     }
 
 

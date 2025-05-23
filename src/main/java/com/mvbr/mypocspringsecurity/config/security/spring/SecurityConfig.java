@@ -13,13 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_ADMIN;
+import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_USER;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {
-
-    private final String HOLE_USER = "USER";
-    private final String HOLE_ADMIN = "ADMIN";
 
     /*
         O método abaixo é um @Bean que configura a cadeia de filtros de segurança (SecurityFilterChain) no
@@ -52,7 +51,7 @@ public class SecurityConfig {
                 // Todas as requisições precisam estar autenticadas...
                 .authorizeHttpRequests((authorizeHttpRequests) -> {
                     authorizeHttpRequests.requestMatchers("/api/v1/usuarios/registrar", "/api/v1/usuarios/logar").permitAll();
-                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/listar").hasRole(HOLE_USER);
+                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/listar").hasAnyRole(HOLE_USER, HOLE_ADMIN);
                     authorizeHttpRequests.requestMatchers("/api/v1/produtos/cadastrar").hasRole(HOLE_ADMIN);
                     authorizeHttpRequests.anyRequest().authenticated();
                 })
