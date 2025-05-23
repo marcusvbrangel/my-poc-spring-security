@@ -6,8 +6,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -36,16 +39,17 @@ public class UsuarioService {
     }
 
     // Nao e necessario, somente para experimentacao...
-    public Object retornarUsuarioLogado() {
+    public Optional<Usuario> retornarUsuarioLogado() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            return usuarioRepository.findByUsername(username).orElse(null);
+            return Optional.ofNullable(usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado")));
         }
 
-        return null;
+        return Optional.empty();
 
     }
 

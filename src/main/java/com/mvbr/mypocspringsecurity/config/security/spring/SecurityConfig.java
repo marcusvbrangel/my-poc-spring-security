@@ -85,13 +85,13 @@ public class SecurityConfig {
 
         UserDetails user = User.builder()
                 .username("user")
-                .password(passwordEncoder.encode("password"))
+                .password(passwordEncoder.encode("1234"))
                 .roles(HOLE_USER)
                 .build();
 
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode("password"))
+                .password(passwordEncoder.encode("1234"))
                 .roles(HOLE_USER, HOLE_ADMIN)
                 .build();
 
