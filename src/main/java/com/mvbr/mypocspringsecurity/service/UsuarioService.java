@@ -25,11 +25,12 @@ public class UsuarioService {
         this.authenticationManager = authenticationManager;
     }
 
-    public Usuario registrar(String username, String password) {
+    public void registrar(Usuario usuario) {
         Usuario user = new Usuario();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        return usuarioRepository.save(user);
+        user.setUsername(usuario.getUsername());
+        user.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        user.setRole("USER");
+        this.usuarioRepository.save(user);
     }
 
     // Nao e necessario, somente para experimentacao...

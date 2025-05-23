@@ -18,6 +18,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class SecurityConfig {
 
+    private final String HOLE_USER = "USER";
+    private final String HOLE_ADMIN = "ADMIN";
+
     /*
         O método abaixo é um @Bean que configura a cadeia de filtros de segurança (SecurityFilterChain) no
         contexto do Spring Security. Ele define como as requisições HTTP serão tratadas em termos de autenticação e
@@ -48,8 +51,9 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable())
                 // Todas as requisições precisam estar autenticadas...
                 .authorizeHttpRequests((authorizeHttpRequests) -> {
-                    authorizeHttpRequests.requestMatchers("/api/v1/user/register", "/api/v1/user/login").permitAll();
-                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/cadastrar", "/api/v1/produtos/listar").authenticated();
+                    authorizeHttpRequests.requestMatchers("/api/v1/usuarios/registrar", "/api/v1/usuarios/logar").permitAll();
+                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/listar").hasRole(HOLE_USER);
+                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/cadastrar").hasRole(HOLE_ADMIN);
                     authorizeHttpRequests.anyRequest().authenticated();
                 })
                 // Ativa o formulário de login padrão...
@@ -79,9 +83,6 @@ public class SecurityConfig {
      */
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-
-        final String HOLE_USER = "USER";
-        final String HOLE_ADMIN = "ADMIN";
 
         UserDetails user = User.builder()
                 .username("user")
