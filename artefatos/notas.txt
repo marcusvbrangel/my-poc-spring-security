@@ -20,7 +20,6 @@ Senha: 1234
 user: admin
 
 {
-    "id": 1,
     "nome": "Carregador celular",
     "preco": 12.09
 }
@@ -28,6 +27,11 @@ user: admin
 {
     "nome": "Porta retratos",
     "preco": 8.50
+}
+
+{
+    "nome": "GPS",
+    "preco": 140.09
 }
 
 
