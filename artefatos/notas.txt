@@ -1,6 +1,11 @@
 
 ------------------------------------------------------------------------------
 
+insert into usuario (username, password, role)
+values ('admin', '$2a$10$/SB.pnZ22e36uXIKzpeS/.NyCSK6FXVJWuD1I82FLK/Y8Zc5ybFj6', 'ADMIN')
+
+------------------------------------------------------------------------------
+
 http://localhost:8080/h2-console
 
 Usuário: user

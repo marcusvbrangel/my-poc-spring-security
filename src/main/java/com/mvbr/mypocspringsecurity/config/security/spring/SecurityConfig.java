@@ -1,21 +1,35 @@
 package com.mvbr.mypocspringsecurity.config.security.spring;
 
+import com.mvbr.mypocspringsecurity.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_ADMIN;
 import static com.mvbr.mypocspringsecurity.config.constants.SecurityHoleConstants.HOLE_USER;
 import static org.springframework.security.config.Customizer.withDefaults;
+
+/*
+    como você não faz autenticação programática (ou seja, não faz login manualmente pelo código), você não precisa
+    do AuthenticationManager no seu UsuarioService nem no seu SecurityConfig.
+
+    O Spring Security já cuida do login/logout automaticamente pelos filtros e endpoints padrão (/login, /logout).
+
+    Você só precisa manter o cadastro de usuário (registro) no seu controller/serviço.
+
+    Resumindo:
+
+    Pode remover ou comentar o AuthenticationManager do seu projeto, pois ele só é necessário se você fosse
+    autenticar usuários manualmente pelo código (o que não é o caso).
+
+    Sua configuração está correta para o uso padrão do Spring Security!
+ */
 
 @Configuration
 public class SecurityConfig {
@@ -48,15 +62,32 @@ public class SecurityConfig {
         httpSecurity
                 // Desativa csrf para facilitar testes via Postman...
                 .csrf((csrf) -> csrf.disable())
-                // Todas as requisições precisam estar autenticadas...
+
+                .headers(headers -> headers.frameOptions().sameOrigin())
+
                 .authorizeHttpRequests((authorizeHttpRequests) -> {
-                    authorizeHttpRequests.requestMatchers("/api/v1/usuarios/registrar", "/api/v1/usuarios/logar").permitAll();
+
+                    authorizeHttpRequests.requestMatchers("/h2-console/**").permitAll();
+
+                    authorizeHttpRequests.requestMatchers("/api/v1/usuarios/registrar").hasRole(HOLE_ADMIN);
+
+                    authorizeHttpRequests.requestMatchers("/login").permitAll();
+                    authorizeHttpRequests.requestMatchers("/logout").authenticated();
+
+//                    authorizeHttpRequests.requestMatchers("/api/v1/usuarios/entrar").permitAll();
+//                    authorizeHttpRequests.requestMatchers("/api/v1/usuarios/sair").authenticated();
+
                     authorizeHttpRequests.requestMatchers("/api/v1/produtos/listar").hasAnyRole(HOLE_USER, HOLE_ADMIN);
-                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/cadastrar").hasRole(HOLE_ADMIN);
+                    authorizeHttpRequests.requestMatchers("/api/v1/produtos/cadastrar").hasRole(HOLE_USER);
+
                     authorizeHttpRequests.anyRequest().authenticated();
                 })
+
                 // Ativa o formulário de login padrão...
                 .formLogin(withDefaults())
+
+                .logout(withDefaults())
+
                 // Ativa autenticação HTTP Basic (útil para testar com tools tipo Postman)...
                 .httpBasic(withDefaults());
 
@@ -80,24 +111,37 @@ public class SecurityConfig {
         Por fim, o método retorna o InMemoryUserDetailsManager configurado, permitindo que o Spring Security
         utilize esses usuários para autenticação.
      */
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//
+//        UserDetails user = User.builder()
+//                .username("user")
+//                .password(passwordEncoder.encode("1234"))
+//                .roles(HOLE_USER)
+//                .build();
+//
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("1234"))
+//                .roles(HOLE_USER, HOLE_ADMIN)
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user, admin);
+//
+//    }
 
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("1234"))
-                .roles(HOLE_USER)
-                .build();
 
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("1234"))
-                .roles(HOLE_USER, HOLE_ADMIN)
-                .build();
 
-        return new InMemoryUserDetailsManager(user, admin);
+//    @Bean
+//    public UserDetailsService userDetailsService(CustomUserDetailsService customUserDetailsService) {
+//        return customUserDetailsService;
+//    }
 
-    }
+
+
+
+
+
 
     /*
         O método abaixo é um @Bean que define um PasswordEncoder no contexto do Spring Security.
@@ -135,11 +179,11 @@ public class SecurityConfig {
         Ao expor o AuthenticationManager como um bean, ele pode ser injetado em outras partes do código, como
         controladores ou serviços, para realizar autenticações programáticas ou personalizadas.
      */
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+//            throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
 
 }
 

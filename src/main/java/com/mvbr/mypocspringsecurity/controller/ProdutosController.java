@@ -2,6 +2,7 @@ package com.mvbr.mypocspringsecurity.controller;
 
 import com.mvbr.mypocspringsecurity.model.Produto;
 import com.mvbr.mypocspringsecurity.service.ProdutoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +22,16 @@ public class ProdutosController {
     }
 
     @PostMapping("/cadastrar")
-    public Produto cadastrar(@RequestBody Produto produto) {
-        return this.produtoService.cadastrar(produto);
+    public ResponseEntity<Produto> cadastrar(@RequestBody Produto produto) {
+        Produto result = this.produtoService.cadastrar(produto);
+        return ResponseEntity.ok(result);
     }
 
+    // todo: implementar response entity...
     @GetMapping("/listar")
-    public List<Produto> listar() {
-        return produtoService.listar();
+    public ResponseEntity<List<Produto>> listar() {
+        List<Produto> result = this.produtoService.listar();
+        return ResponseEntity.ok(result);
     }
 
 }
